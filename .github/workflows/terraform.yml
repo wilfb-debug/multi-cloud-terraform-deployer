@@ -19,6 +19,24 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        # Fails the CI if any .tf files aren't correctly formatted.
+        # Fix locally by running: terraform fmt
+
       - name: Terraform Validate
         run: terraform validate
+        # Checks for syntax errors and invalid references in your config.
 
+      - name: Setup tflint
+        uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: latest
+
+      - name: Init tflint
+        run: tflint --init
+
+      - name: Run tflint
+        run: tflint --format compact
+        # Lints for deprecated resources, missing required fields,
+        # and GCP/AWS provider-specific best practice violations.
