@@ -3,27 +3,20 @@ resource "google_compute_network" "vpc" {
   auto_create_subnetworks = true
 }
 
-resource "google_cloud_run_service" "app" {
+resource "google_cloud_run_v2_service" "app" {
   name     = "multi-cloud-app"
   location = var.region
 
   template {
-    spec {
-      containers {
-        image = "gcr.io/cloudrun/hello"
-      }
+    containers {
+      image = "gcr.io/cloudrun/hello"
     }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
   }
 }
 
-resource "google_cloud_run_service_iam_member" "public_access" {
-  location = google_cloud_run_service.app.location
-  service  = google_cloud_run_service.app.name
+resource "google_cloud_run_v2_service_iam_member" "public_access" {
+  location = google_cloud_run_v2_service.app.location
+  name     = google_cloud_run_v2_service.app.name
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
